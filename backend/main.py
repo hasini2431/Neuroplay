@@ -35,18 +35,17 @@ app = FastAPI(
 # 2. CORS CONFIGURATION
 # ==========================================
 
+
+# CORS CONFIGURATION
+
 app.add_middleware(
-
     CORSMiddleware,
-
-    allow_origins=["*"],
-
+    allow_origins=[
+        "https://neuroplay-1.onrender.com"
+    ],
     allow_credentials=False,
-
     allow_methods=["*"],
-
     allow_headers=["*"]
-
 )
 
 
