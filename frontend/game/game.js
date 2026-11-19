@@ -1322,7 +1322,7 @@ async function showResults() {
         $("nextButton").disabled = true;
 
         const response = await fetch(
-            "http://127.0.0.1:8000/predict",
+             "https://neuroplay.onrender.com/predict",
             {
 
                 method: "POST",
