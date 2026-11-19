@@ -45,7 +45,7 @@ signupForm.addEventListener("submit", async function (event) {
         message.textContent = "Creating your account...";
 
         const response = await fetch(
-            "http://127.0.0.1:8000/signup",
+           "https://neuroplay.onrender.com/signup",
             {
                 method: "POST",
                 headers: {
