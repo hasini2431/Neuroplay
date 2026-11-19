@@ -1,4 +1,18 @@
-from fastapi import FastAPI, HTTPException
+import os
+import json
+import time
+import base64
+import hashlib
+import hmac
+
+from fastapi import (
+    FastAPI,
+    HTTPException,
+    Depends
+)
+
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
 from fastapi.middleware.cors import CORSMiddleware
 
 from pydantic import BaseModel, Field
@@ -12,9 +26,9 @@ from database import (
     create_user,
     authenticate_user,
     get_user_by_username,
-    save_test_result
+    save_test_result,
+    get_user_test_results
 )
-
 
 # ==========================================
 # 1. CREATE FASTAPI APPLICATION
@@ -29,7 +43,92 @@ app = FastAPI(
     version="1.0"
 
 )
+# Authentication Configuration
 
+SECRET_KEY = os.getenv("SECRET_KEY", "neuroplay-development-secret-change-this")
+
+TOKEN_EXPIRY_SECONDS = 60 * 60 * 24  # 24 hours
+
+security = HTTPBearer()
+# ==========================================
+# AUTHENTICATION TOKEN FUNCTIONS
+# ==========================================
+
+def create_access_token(user_id):
+
+    expiry = int(time.time()) + TOKEN_EXPIRY_SECONDS
+
+    payload = {
+        "user_id": user_id,
+        "expiry": expiry
+    }
+
+    payload_bytes = json.dumps(payload).encode("utf-8")
+
+    encoded_payload = base64.urlsafe_b64encode(
+        payload_bytes
+    ).decode("utf-8").rstrip("=")
+
+    signature = hmac.new(
+        SECRET_KEY.encode("utf-8"),
+        encoded_payload.encode("utf-8"),
+        hashlib.sha256
+    ).hexdigest()
+
+    return encoded_payload + "." + signature
+
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+
+    token = credentials.credentials
+
+    try:
+
+        encoded_payload, received_signature = token.split(".")
+
+        expected_signature = hmac.new(
+            SECRET_KEY.encode("utf-8"),
+            encoded_payload.encode("utf-8"),
+            hashlib.sha256
+        ).hexdigest()
+
+        if not hmac.compare_digest(
+            received_signature,
+            expected_signature
+        ):
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid authentication token"
+            )
+
+        padded_payload = encoded_payload + "=" * (
+            -len(encoded_payload) % 4
+        )
+
+        payload = json.loads(
+            base64.urlsafe_b64decode(padded_payload)
+        )
+
+        if int(payload["expiry"]) < int(time.time()):
+            raise HTTPException(
+                status_code=401,
+                detail="Session expired. Please login again."
+            )
+
+        return {
+            "user_id": int(payload["user_id"])
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication token"
+        )
 
 # ==========================================
 # 2. CORS CONFIGURATION
@@ -230,17 +329,54 @@ def login(request: LoginRequest):
 
         )
 
+    # Generate authentication token
+    access_token = create_access_token(
+        result["user"]["user_id"]
+     )
+
     return {
-
         "success": True,
-
         "message": "Login successful",
-
-        "user": result["user"]
-
+        "user": result["user"],
+        "access_token": access_token,
+        "token_type": "bearer"
     }
 
+# ==========================================
+# GET LOGGED-IN USER TEST HISTORY
+# ==========================================
 
+@app.get("/results")
+def get_results(current_user: dict = Depends(get_current_user)):
+
+    user_id = current_user["user_id"]
+
+    results = get_user_test_results(user_id)
+
+    formatted_results = []
+
+    for result in results:
+
+        # Convert stored JSON strings into Python objects
+        try:
+            result["question_records"] = json.loads(
+                result["question_records"] or "[]"
+            )
+
+            result["prediction_details"] = json.loads(
+                result["prediction_details"] or "{}"
+            )
+
+        except (json.JSONDecodeError, TypeError):
+            result["question_records"] = []
+            result["prediction_details"] = {}
+
+        formatted_results.append(result)
+
+    return {
+        "success": True,
+        "results": formatted_results
+    }
 # ==========================================
 # 12. RANDOM FOREST PREDICTION
 # ==========================================
