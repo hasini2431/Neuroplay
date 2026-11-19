@@ -244,3 +244,6 @@ if (!result) {
     console.log("Miss Rate:", missRate);
 
 }
+function goToDashboard() {
+    window.location.href = "../dashboard/dashboard.html";
+}
