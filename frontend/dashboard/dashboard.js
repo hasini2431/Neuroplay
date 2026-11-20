@@ -3,8 +3,7 @@
 // ========================================
 
 // Backend API URL
-const API = "http://127.0.0.1:8000";
-
+const API = "https://neuroplay.onrender.com";
 // Get login information
 const token = localStorage.getItem("neuroplayToken");
 
