@@ -382,3 +382,174 @@ body {
     margin-top: 22px;
   }
 }
+/* =================================
+   DASHBOARD READABILITY IMPROVEMENTS
+================================= */
+
+/* Main content */
+.wrap {
+    width: min(1250px, 94%);
+    margin: 35px auto 60px;
+}
+
+/* Welcome section */
+.welcome {
+    min-height: 160px;
+    padding: 35px 42px;
+    border: 2px solid rgba(255,255,255,0.8);
+}
+
+/* Statistics cards */
+.stats {
+    gap: 22px;
+    margin: 25px 0 30px;
+}
+
+.stat {
+    min-height: 95px;
+    background: rgba(255,255,255,0.97);
+    border: 2px solid rgba(255,255,255,0.95);
+    box-shadow: 0 8px 25px rgba(35,20,70,0.18);
+}
+
+.stat small {
+    color: #625477;
+    font-size: 13px;
+}
+
+.stat strong {
+    color: #39245f;
+    font-size: 22px;
+}
+
+/* Previous results section */
+.history {
+    background: rgba(255,255,255,0.96);
+    padding: 28px;
+    border-radius: 25px;
+    border: 2px solid white;
+    box-shadow: 0 12px 35px rgba(35,20,70,0.20);
+}
+
+.section-heading {
+    margin-bottom: 25px;
+    align-items: center;
+}
+
+.section-heading h2 {
+    color: #39245f;
+    font-size: 32px;
+}
+
+.section-heading p:not(.eyebrow) {
+    color: #665779;
+    font-size: 14px;
+}
+
+.section-heading .eyebrow {
+    color: #7543dc;
+}
+
+/* Test result cards */
+.result-card {
+    background: #ffffff;
+    border: 1px solid #e5dcf5;
+    padding: 23px;
+    border-radius: 18px;
+    box-shadow: 0 5px 18px rgba(55,35,90,0.09);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.result-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 22px rgba(55,35,90,0.15);
+}
+
+.result-card h3 {
+    color: #39245f;
+    font-size: 21px;
+}
+
+.result-card p {
+    color: #716580;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* Risk indicator */
+.risk {
+    background: #eee6ff;
+    color: #6338b2;
+    padding: 10px 16px;
+}
+
+/* View details button */
+.view {
+    padding: 12px 19px;
+    border-radius: 25px;
+    font-size: 13px;
+    transition: 0.2s ease;
+}
+
+.view:hover {
+    background: #cce6ff;
+    transform: translateY(-2px);
+}
+
+/* Loading and empty messages */
+.status,
+.empty {
+    background: #ffffff;
+    color: #625477;
+    font-size: 14px;
+    padding: 23px;
+}
+
+/* New test button */
+.new-test {
+    padding: 14px 22px;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.new-test:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(117,67,220,0.3);
+}
+
+/* Footer */
+.disclaimer {
+    display: inline-block;
+    background: rgba(255,255,255,0.90);
+    padding: 9px 18px;
+    border-radius: 20px;
+    color: #49345f;
+}
+
+/* Responsive design */
+@media (max-width: 760px) {
+
+    .wrap {
+        width: 94%;
+    }
+
+    .history {
+        padding: 20px 15px;
+    }
+
+    .welcome {
+        padding: 25px 22px;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+    }
+
+    .new-test {
+        white-space: normal;
+    }
+
+    .result-card {
+        padding: 17px;
+    }
+}
