@@ -71,8 +71,8 @@ signupForm.addEventListener("submit", async function (event) {
             "Account created successfully! Please login.";
 
         setTimeout(function () {
-            window.location.href = "../game/game.html";
-        }, 1200);
+    window.location.href = "../login/login.html";
+}, 1200);
 
     } catch (error) {
 
